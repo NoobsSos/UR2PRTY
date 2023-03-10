@@ -17,4 +17,26 @@ const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/_data/bootcamps.json`
 
 // IMPORT INTO DB
 
+const importData = async () => {
+    await Bootcamp.create(bootcamps);
+
+    console.log('data imported...'.green.inverse);
+    process.exit();
+}
+
+// Delete data
+
+const deleteData = async () => {
+    await Bootcamp.deleteMany();
+
+    console.log('data destroyed...'.red.inverse);
+    process.exit();
+}
+
+if(process.argv[2] === '-i') {
+    importData();
+} else if(process.argv[2] === '-d') {
+    deleteData();
+}
+
 // I **** *o*
