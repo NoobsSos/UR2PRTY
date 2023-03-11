@@ -11,37 +11,20 @@ const ErrorResponse = require('../utils/errorResponse')
 exports.getCourses = asyncHandler(async (req, res, next) => {
     let query;
 
-    const reqQuery = {...req.query};
-
-    const removeFields = ['select', 'sort', 'page', 'limit'];
-
-    // Loop over removeField and delete them
-    removeFields.forEach(param => delete reqQuery[param]);
-
-
-
-    let queryStr = JSON.stringify(reqQuery);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-
-    query = Course.find(JSON.parse(queryStr));
-
-    // Select Fields
-
-    if(req.query.select) {
-      const fields = req.query.select.split(',').join(' ');
-      query = query.select(fields);
-    }
-
-    // Sort
-    if(req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
+    if(req.params.bootcampId) {
+        query = Course.find({
+            bootcamp: req.params.bootcampId
+        });
     } else {
-      query = query.sort('-createdAt');
+        query = Course.find().populate({
+            path: 'bootcamp',
+            select: 'name description'
+        });
     }
 
-    // Pagination
+    const courses = await query;
 
+    // pagination result
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 25;
     const startIndex = (page - 1) * limit;
@@ -49,20 +32,6 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
     const endIndex = page * limit;
     const total = await Course.countDocuments();
 
-
-    query = query.skip(startIndex).limit(limit);
-
-    if(req.params.bootcampId) {
-        query = Course.find({
-            bootcamp: req.params.bootcampId
-        });
-    } else {
-        query = Course.find();
-    }
-
-    const courses = await query;
-
-    // pagination result
     const pagination = {};
 
     if(endIndex < total) {
