@@ -5,6 +5,7 @@ const colors = require('colors');
 // LOAD MODELS
 
 const Bootcamp = require('./models/Bootcamp');
+const Courses = require('./models/Course');
 
 // CONNECT DB
 
@@ -15,10 +16,13 @@ mongoose
 
 const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/_data/bootcamps.json`, 'utf-8'));
 
+const courses = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json`, 'utf-8'));
+
 // IMPORT INTO DB
 
 const importData = async () => {
     await Bootcamp.create(bootcamps);
+    await Courses.create(courses);
 
     console.log('data imported...'.green.inverse);
     process.exit();
@@ -28,6 +32,7 @@ const importData = async () => {
 
 const deleteData = async () => {
     await Bootcamp.deleteMany();
+    await Courses.deleteMany();
 
     console.log('data destroyed...'.red.inverse);
     process.exit();

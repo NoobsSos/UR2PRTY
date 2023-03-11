@@ -5,6 +5,7 @@ const colors = require('colors');
 
 // route files
 const bootcamps = require('./routes/bootcamps.js');
+const courses = require('./routes/courses.js');
 connectDB();
 //LOAD VARS
 const app = express();
@@ -18,6 +19,9 @@ app.use(morgan('dev'));
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+
+app.use('/api/v1/courses', courses);
+
 
 const PORT = process.env.PORT || 5000;
 
