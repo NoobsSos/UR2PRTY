@@ -50,3 +50,33 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({success: true, count: courses.length, pagination: pagination, data: courses});
 });
+
+exports.createCourse = asyncHandler (async (req, res, next) => {
+
+    const course = await Course.create(req.body);
+
+    res.status(201).json({success: true, data: course})
+})
+
+exports.updateCourse = asyncHandler(async (req, res, next) => {
+    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    if (!course) {
+        res.status(400).json({success: false});
+    }
+
+    res.status(200).json({success: true, data: course});
+})
+
+exports.deleteCourse = asyncHandler (async (req, res, next) => {
+    const course = await Course.findByIdAndDelete(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.status(200).json({success: true, data: course});
+
+})
